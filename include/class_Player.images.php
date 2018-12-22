@@ -40,12 +40,21 @@ class PlayerImage {
         if ($args["idusuario"]){
             $filtros["IDUSUARIO"]  =  $args["idusuario"]   ;
         }
-
+        if ($jsonRAW["IDUSUARIOS"]){
+      //      $filtros["IDUSUARIO"]  =  $args["IDUSUARIOS"][0]   ;
+            $filtros['$or'] =  $jsonRAW["IDUSUARIOS"][0]   ;
+        }
+        if ($jsonRAW["TipoImagem"]){
+            $filtros["TipoImagem"]  =  $jsonRAW["TipoImagem"]   ;
+        }
+        $debug = $filtros;
+      //  $debug = $jsonRAW;///var_export($jsonRAW,1);
         $result =  $this->Image->getImage($filtros );
 //	$resultMongo =  iterator_to_array(  $resultMongo) ;
 
         $data["hits"] = $result;
         $data["resultado"] = "SUCESSO";
+      //  $data["debug"] = $debug;//"SUCESSO";
 
         return $response->withStatus(200)
             ->withHeader('Content-type', 'application/json;charset=utf-8')
@@ -64,6 +73,19 @@ class PlayerImage {
                     ->withHeader('Content-type', 'application/json;charset=utf-8')
                     ->withJson($data);
             }
+
+            if ($jsonRAW["TipoImagem"] == "Profile"){
+              //se for do tipo imagemdeperfil deleta a anterior, antes de incluir uma nova.
+
+              $filtrosDelete["TipoImagem"] = $jsonRAW["TipoImagem"];
+              $filtrosDelete["IDUSUARIO"] = $args["idusuario"];
+
+            //  echo "\n\n\n ".$filtrosDelete;
+
+              $this->DeletePlayerImage   ($args, $jsonRAW, $filtrosDelete);
+              //$data["debug"] = $filtrosDelete;
+            }
+
             $idMongo = $this->Image->SetImage( $jsonRAW , $args);
 
             $data["msg"] = "Inserted with Object ID '{$idMongo}'";
@@ -76,14 +98,14 @@ class PlayerImage {
                 $data =    array(	"resultado" =>  "ERRO",
                     "erro" => "Impossible to save that image - $mensagem_retorno");
 
-                return $response->withStatus(200)
+                return $response->withStatus(201)
                     ->withHeader('Content-type', 'application/json;charset=utf-8')
                     ->withJson($data);
             }
         }
 
 
-    function DeletePlayerImage(  $request, $response, $args,   $jsonRAW){
+    function DeletePlayerImageAPI(  $request, $response, $args,   $jsonRAW){
       IF (!$jsonRAW || !$jsonRAW["idimagem"] ) {
           $data =  array(	"resultado" =>  "ERRO",
           "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
@@ -94,14 +116,31 @@ class PlayerImage {
       }
 
       $filtros["idimagem"] = $jsonRAW["idimagem"];
+      $filtros["TipoImagem"] = $jsonRAW["TipoImagem"];
+      $filtros["IDUSUARIO"] = $args["idusuario"];
 
-      $result  = $this->Image->DeleteImage   ($args["idusuario"],  $filtros  );
-      if ($result)
+      if ($this->DeletePlayerImage   ($args,  $jsonRAW, $filtros  ))
         $data =   array(	"resultado" =>  "SUCESSO" );
       else
         $data =   array(	"resultado" =>  "ERRO" );
 
       return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+    }
+
+    function DeletePlayerImage(  $args, $jsonRAW, $filtros ){
+      IF (!$jsonRAW  ) {
+          return false;
+      }
+
+    //  var_dump($filtros);
+
+      $result  = $this->Image->DeleteImage   ($args["idusuario"],  $filtros  );
+
+    //  echo "\n resultado do delete rows ".$result;
+      if ($result)
+        return true;
+      else
+        return false;
     }
 
 

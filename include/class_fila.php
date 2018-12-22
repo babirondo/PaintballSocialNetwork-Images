@@ -26,13 +26,14 @@ class Fila {
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
-
+        /*
         if ($jsonRAW["idimagem"]){
             $filtros["_id"]  =  $jsonRAW["idimagem"]   ;
         }
         if ($args["idusuario"]){
             $filtros["IDUSUARIO"]  =  $args["idusuario"]   ;
         }
+        */
 
 
         // POSTAR NA FILA A IMAGEM

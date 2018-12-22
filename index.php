@@ -20,6 +20,15 @@ $app->post('/Analyze/Image/{idusuario}', function ($request, $response, $args)  
 
 }  );
 
+$app->post('/Players/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Player.images.php");
+
+    $cPlayerImage = new PlayerImage();
+    $retorno = $cPlayerImage->getPlayerImage($request, $response, $args ,  $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
 $app->get('/Player/{idusuario}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Player.images.php");
 
@@ -44,7 +53,7 @@ $app->delete('/Player/{idusuario}', function ($request, $response, $args)  use (
     require_once("include/class_Player.images.php");
 
     $cPlayerImage = new PlayerImage();
-    $retorno = $cPlayerImage->DeletePlayerImage($request, $response, $args ,  $request->getParsedBody() );
+    $retorno = $cPlayerImage->DeletePlayerImageAPI($request, $response, $args ,  $request->getParsedBody() );
 
     return $retorno;
 

@@ -22,12 +22,18 @@ function process_message($message)
   $trans=null;$trans = array(":idjogador" => $json_mensagem["IDUSUARIO"]  );
   $query_API = $API->CallAPI("POST", strtr( $Globais->SaveImage, $trans), json_encode($json_mensagem));
 
-  if ($query_API["babirondo/rest-api"]["http_code"] == 200){
-    $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
-    echo ".";
+  //var_dump($query_API);
+
+  if (is_array($query_API)){
+    if ($query_API["babirondo/rest-api"]["http_code"] == 200){
+      $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
+      echo ".";
+    }
+    else
+      echo "X";
   }
   else
-    echo "X";
+    echo "x";
 
 
 }
