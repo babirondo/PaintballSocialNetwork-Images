@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+
+        GIT_REPOSITORY="https://github.com/babirondo/PaintballSocialNetwork-AuthAPI.git"
+        SYSTEM_WWWROOT = "/var/www/html"
+        SYSTEM_FOLDER_TEMP="PaintballRelease"
+        SYSTEM_FOLDER="PaintballSocialNetwork-AuthAPI"
+        SYSTEM_FOLDER_NOVO="$SYSTEM_FOLDER_TEMP"+"_bkp"
+        HOST="172.18.0.5"
+    }
+
+    stages {
+
+            stage('Testing') {
+                steps {
+                  echo "Running ${env.BUILD_ID} , $BUILD_NUMBER on ${env.JENKINS_URL}"
+                }
+            }
+            stage('Preparing Env') {
+                steps {
+                    sshagent(['c905ba41-7b0c-4a78-aebc-947fc6f6a0ad']) {
+                        sh "echo '{\"VERSION\":\"${env.BUILD_ID}\"}' > /tmp/version"
+
+                        sh 'ssh -tt bruno@$HOST   rm -rf /var/www/html/$SYSTEM_FOLDER'
+                        sh 'ssh -tt bruno@$HOST  mkdir /var/www/html/$SYSTEM_FOLDER'
+                    }
+                }
+            }
+            stage('Downloading Source Code') {
+                steps {
+                    sshagent(['c905ba41-7b0c-4a78-aebc-947fc6f6a0ad']) {
+                        sh 'ssh -tt bruno@$HOST  \"git clone $GIT_REPOSITORY /var/www/html/$SYSTEM_FOLDER;\"'
+                    }
+                }
+            }
+            stage('Downloading Dependencies') {
+                steps {
+                    sshagent(['c905ba41-7b0c-4a78-aebc-947fc6f6a0ad']) {
+                        sh 'ssh -tt bruno@$HOST  \" cd /var/www/html/$SYSTEM_FOLDER; composer install; composer update; composer dump-autoload -o;  \" '
+                    }
+                }
+            }
+            stage('Deploying') {
+                steps {
+                    sshagent(['c905ba41-7b0c-4a78-aebc-947fc6f6a0ad']) {
+
+//                        sh 'ssh -tt bruno@$HOST rm -rf /var/www/html/$SYSTEM_FOLDER; cd /var/www/html/; ls -la /var/www/html/; mv   /var/www/html/$SYSTEM_FOLDER_TEMP /var/www/html/xxx '
+                     //   sh 'ssh -tt bruno@$HOST \" ls /var/www/html; mv   /var/www/html/$SYSTEM_FOLDER /var/www/html/$SYSTEM_FOLDER_TEMP; ls /var/www/html \" '
+
+                    }
+                }
+            }
+            stage('Configuring') {
+                steps {
+                    sshagent(['c905ba41-7b0c-4a78-aebc-947fc6f6a0ad']) {
+                        sh 'ssh -tt bruno@$HOST chmod -R 777 /var/www/html/$SYSTEM_FOLDER/vendor'
+                        sh 'ssh -tt bruno@$HOST chmod -R 777 /var/www/html/$SYSTEM_FOLDER'
+                        sh "scp /tmp/version bruno@$HOST:/var/www/html/$SYSTEM_FOLDER/include/config.json"
+                    }
+                }
+            }
+
+
+
+    }
+}

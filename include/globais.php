@@ -49,11 +49,25 @@ class Globais{
 
         }
 
+
+        // extraindo configuracoes adicionais do arquivo config.json
+       	$configuracoes_externas = file_get_contents('include/config.json');
+       	$config_parsed = json_decode($configuracoes_externas,true);
+       	$this->external_config = $config_parsed;
+
         $this->MongoConf["Index"] = "Imagens";
         $this->MongoConf["Type"]["campeonato"] = "Players";
         $this->MongoConf["Id"] = "id";
 
         $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador";
+        $this->healthcheck = $servidor["images"]."/PaintballSocialNetwork-Images/healthcheck/"; //UNIT TEST
+        $this->PushImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Analyze/Image/:idjogador"; //UNIT TEST
+        $this->getPlayersImage = $servidor["images"]."/PaintballSocialNetwork-Images/Players/"; //UNIT TEST
+        $this->getPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
+
+        $this->setPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
+        $this->DeletePlayerImageAPI = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
+
     }
 
 }

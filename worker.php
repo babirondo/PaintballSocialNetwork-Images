@@ -1,7 +1,7 @@
 <?php
 //namespace raiz;
-include("vendor/autoload.php");
-include("include/globais.php");
+include_once("vendor/autoload.php");
+include_once("include/globais.php");
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -11,8 +11,8 @@ $Globais = new raiz\Globais();
 
 function process_message($message)
 {
-  include_once("vendor/autoload.php");
-  include_once("include/globais.php");
+  include_once(__DIR__."/vendor/autoload.php");
+  include_once(__DIR__."/include/globais.php");
 
   $API = new \babirondo\REST\RESTCall();
   $Globais = new raiz\Globais();

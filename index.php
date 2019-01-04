@@ -20,6 +20,18 @@ $app->post('/Analyze/Image/{idusuario}', function ($request, $response, $args)  
 
 }  );
 
+
+
+$app->delete('/Player/{idusuario}', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Player.images.php");
+
+    $cPlayerImage = new PlayerImage();
+    $retorno = $cPlayerImage->DeletePlayerImageAPI($request, $response, $args ,  $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
+
 $app->post('/Players/', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Player.images.php");
 
@@ -29,6 +41,7 @@ $app->post('/Players/', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 
 }  );
+
 $app->get('/Player/{idusuario}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Player.images.php");
 
@@ -38,6 +51,10 @@ $app->get('/Player/{idusuario}', function ($request, $response, $args)  use ($ap
     return $retorno;
 
 }  );
+
+
+
+
 
 $app->post('/Player/{idusuario}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Player.images.php");
@@ -49,14 +66,13 @@ $app->post('/Player/{idusuario}', function ($request, $response, $args)  use ($a
 
 }  );
 
-$app->delete('/Player/{idusuario}', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Player.images.php");
+$app->get('/healthcheck/', function ($request, $response, $args)  use ($app )   {
+    require_once("healthcheck/healthcheck.php");
 
-    $cPlayerImage = new PlayerImage();
-    $retorno = $cPlayerImage->DeletePlayerImageAPI($request, $response, $args ,  $request->getParsedBody() );
+    $HealthCheck = new HealthCheck();
 
+    $retorno = $HealthCheck->check($response, $request->getParsedBody() );
     return $retorno;
-
 }  );
 
 

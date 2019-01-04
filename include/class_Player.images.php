@@ -41,7 +41,8 @@ class PlayerImage {
             $filtros["IDUSUARIO"]  =  $args["idusuario"]   ;
         }
         if ($jsonRAW["IDUSUARIOS"]){
-      //      $filtros["IDUSUARIO"]  =  $args["IDUSUARIOS"][0]   ;
+
+          //TODO: NAO FUNCIONANDO O FILTRO POR N USUARIOS
             $filtros['$or'] =  $jsonRAW["IDUSUARIOS"][0]   ;
         }
         if ($jsonRAW["TipoImagem"]){
@@ -92,6 +93,7 @@ class PlayerImage {
 
             if ( $idMongo ){
                 $data["resultado"] = "SUCESSO" ;
+                $data["idimagem"] = "{$idMongo}";
                 return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
             }
             else {
