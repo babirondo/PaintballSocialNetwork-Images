@@ -19,8 +19,20 @@ function process_message($message)
 
   $json_mensagem = json_decode($message->body, true);
 
-  $trans=null;$trans = array(":idjogador" => $json_mensagem["IDUSUARIO"]  );
-  $query_API = $API->CallAPI("POST", strtr( $Globais->SaveImage, $trans), json_encode($json_mensagem));
+  ini_set('xdebug.var_display_max_depth', '10');
+  ini_set('xdebug.var_display_max_children', '256');
+  ini_set('xdebug.var_display_max_data', '1024');
+
+  //var_dump($json_mensagem);
+
+  if ($json_mensagem["IDUSUARIO"]){
+    $trans=null;$trans = array(":idjogador" => $json_mensagem["IDUSUARIO"]  );
+    $query_API = $API->CallAPI("POST", strtr( $Globais->SaveImage, $trans), json_encode($json_mensagem));
+  }
+  else if ($json_mensagem["IDTIME"]){
+    $trans=null;$trans = array(":idtime" => $json_mensagem["IDTIME"]  );
+    $query_API = $API->CallAPI("POST", strtr( $Globais->SaveTeamImage, $trans), json_encode($json_mensagem));
+  }
 
   //var_dump($query_API);
 

@@ -49,16 +49,16 @@ class Images{
     }
 
 
-        function resize_image($imagem, $tipo, $idusuario=""){
+        function resize_image($imagem, $tipo, $idreferencia="", $tiporeferencia=""){
           switch($tipo){
             case("Profile"):
               $altura = 320 ;
               $largura = 320;
             break;
           }
-          $nome_arquivo_foto = "$idusuario-original-".uniqid().".jpg";
+          $nome_arquivo_foto = "$tiporeferencia-$idreferencia-original-".uniqid().".jpg";
           $this->base64_to_jpeg($imagem,$nome_arquivo_foto );
-          $nome_arquivo_foto_resized = "$idusuario-$tipo-".uniqid().".jpg";
+          $nome_arquivo_foto_resized = "$tiporeferencia-$idreferencia-$tipo-".uniqid().".jpg";
 
           $image = new SimpleImage();
           if (! $image->load( $this->folder.$nome_arquivo_foto ) ){
@@ -80,18 +80,7 @@ class Images{
           }
         }
 
-
-
-        function store_uploaded_image($html_element_name, $new_img_width, $new_img_height) {
-
-            $target_dir = "your-uploaded-images-folder/";
-            $target_file = $target_dir . basename($_FILES[$html_element_name]["name"]);
-
-            return $target_file; //return name of saved file in case you want to store it in you database or show confirmation message to user
-
-        }
-
-        function setImage(  $jsonRAW , $args ){
+        function setImage(  $jsonRAW , $args , $tipoImagem){
 
             if (!$this->con->conectado || !$jsonRAW["imagem"]){
               return false;
@@ -100,13 +89,29 @@ class Images{
             IF (!$jsonRAW  ) {
               return false;
             }
-            $jsonRAW["IDUSUARIO"] = $args["idusuario"];
+
+            //echo "<BR> tipoo $tipoImagem"; var_dump($jsonRAW);
+
+            switch ($tipoImagem){
+              case("Team"):
+                  $idreferencia =$jsonRAW["IDTIME"];// = $args["idreferencia"];
+              break;
+
+              case("Player"):
+                  $idreferencia = $jsonRAW["IDUSUARIO"] ;//= $args["idreferencia"];
+              break;
+            }
 
 
+        //    $jsonRAW["IDUSUARIO"] = $args["idusuario"];
+            $imagem_redimensionada = $this->resize_image($jsonRAW["imagem"], $jsonRAW["TipoImagem"], $idreferencia, $tipoImagem);
 
-            $imagem_redimensionada = $this->resize_image($jsonRAW["imagem"], $jsonRAW["TipoImagem"], $args["idusuario"]);
             if ($imagem_redimensionada != false){
+              //echo "IMAGEM $imagem_redimensionada";
               $jsonRAW["imagem"] =   $imagem_redimensionada;
+
+
+              //var_dump($args);
 
               $resultMongo = $this->con->MongoInsertOne( $jsonRAW );
               $idMongo = $resultMongo->getInsertedId();
@@ -131,22 +136,30 @@ class Images{
             return false;
         }
         $filtros =  array();
-
+/*
         if ($args["_id"]){
             $filtros["_id"]  =   $this->con->MongoToObject ( $args["_id"] )  ;
         }
         if ($args["IDUSUARIO"]){
             $filtros["IDUSUARIO"]  =    $args["IDUSUARIO"]   ;
         }
-        $resultMongo =  $this->con->MongoFind($filtros );
+        if ($args["IDTIME"]){
+            $filtros["IDTIME"]  =    $args["IDTIME"]   ;
+        }
+        if ($args["IDTIMES"]){
+            $filtros["IDTIMES"]  =    $args["IDTIMES"]   ;
+        }
+        */
+        //var_dump($args);
+        $resultMongo =  $this->con->MongoFind($args  );//$filtros
   //	$resultMongo =  iterator_to_array(  $resultMongo) ;
 
         return $resultMongo;
     }
 
-    function DeleteImage( $idusuario,  $args){
+    function DeleteImage( $idreferencia,  $args){
 
-        if (!$this->con->conectado  && !$idusuario){
+        if (!$this->con->conectado  && !$idreferencia){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
             return $response->withStatus(500)
@@ -155,9 +168,13 @@ class Images{
         }
 
 
-        if ($idusuario){
-            $filtros["IDUSUARIO"]  =  $idusuario;
+        if ($args["IDUSUARIO"]){
+            $filtros["IDUSUARIO"]  =  $idreferencia;
         }
+        if ($args["IDTIME"]){
+            $filtros["IDTIME"]  =  $idreferencia;
+        }
+
         if ($args["idimagem"]){
             $filtros["_id"]   =     $this->con->MongoToObject ( $args["idimagem"] )  ;
         }

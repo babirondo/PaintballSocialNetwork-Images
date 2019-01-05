@@ -59,12 +59,23 @@ class Globais{
         $this->MongoConf["Type"]["campeonato"] = "Players";
         $this->MongoConf["Id"] = "id";
 
-        $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador";
+
+
         $this->healthcheck = $servidor["images"]."/PaintballSocialNetwork-Images/healthcheck/"; //UNIT TEST
-        $this->PushImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Analyze/Image/:idjogador"; //UNIT TEST
+
+        $this->PushTeamImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Teams/Analyze/Image/:idtime"; //UNIT TEST
+        $this->SaveTeamImage = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime";
+        $this->getTeamsImage = $servidor["images"]."/PaintballSocialNetwork-Images/Teams/"; //UNIT TEST
+        $this->getTeamImage = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime"; //UNIT TEST
+        $this->setTeamImage = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime"; //UNIT TEST
+        $this->DeleteTeamImageAPI = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime"; //UNIT TEST
+
+
+
+        $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador";
+        $this->PushUserImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Usuarios/Analyze/Image/:idjogador"; //UNIT TEST
         $this->getPlayersImage = $servidor["images"]."/PaintballSocialNetwork-Images/Players/"; //UNIT TEST
         $this->getPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
-
         $this->setPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
         $this->DeletePlayerImageAPI = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
 

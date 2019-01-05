@@ -17,6 +17,49 @@ class Fila {
 
 
 
+        function PushTeamImage (  $request, $response, $args, $jsonRAW ){
+            IF (!$jsonRAW) {
+                $data =  array(	"resultado" =>  "ERRO",
+                    "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
+
+                return $response->withStatus(500)
+                    ->withHeader('Content-type', 'application/json;charset=utf-8')
+                    ->withJson($data);
+            }
+            // POSTAR NA FILA A IMAGEM
+            $exchange = $this->Globais->Rabbit_exchange;
+            $queue = $this->Globais->Rabbit_queue;
+
+            $connection = new AMQPStreamConnection($this->Globais->Rabbit_host, $this->Globais->Rabbit_port, $this->Globais->Rabbit_username, $this->Globais->Rabbit_password, $this->Globais->Rabbit_vhost);
+            $channel = $connection->channel();
+
+            $channel->queue_declare($queue, false, true, false, false);
+            $channel->exchange_declare($exchange, 'direct', false, true, false);
+            $channel->queue_bind($queue, $exchange);
+
+
+            $jsonRAW["IDTIME"] = $args["idtime"];
+            $messageBody = json_encode($jsonRAW);
+
+            //var_dump($messageBody);            exit;
+
+            $message = new AMQPMessage($messageBody, array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
+
+            //for ($i=0;$i<1000;$i++)
+              $channel->basic_publish($message, $exchange);
+
+            $channel->close();
+            $connection->close();
+
+            $data["resultado"] = "SUCESSO";
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+
+
     function push (  $request, $response, $args, $jsonRAW ){
         IF (!$jsonRAW) {
             $data =  array(	"resultado" =>  "ERRO",
@@ -26,16 +69,6 @@ class Fila {
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
-        /*
-        if ($jsonRAW["idimagem"]){
-            $filtros["_id"]  =  $jsonRAW["idimagem"]   ;
-        }
-        if ($args["idusuario"]){
-            $filtros["IDUSUARIO"]  =  $args["idusuario"]   ;
-        }
-        */
-
-
         // POSTAR NA FILA A IMAGEM
         $exchange = $this->Globais->Rabbit_exchange;
         $queue = $this->Globais->Rabbit_queue;
@@ -51,6 +84,9 @@ class Fila {
         $jsonRAW["IDUSUARIO"] = $args["idusuario"];
         $messageBody = json_encode($jsonRAW);
 
+        //var_dump($messageBody);
+        
+
         $message = new AMQPMessage($messageBody, array('content_type' => 'text/plain', 'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT));
 
         //for ($i=0;$i<1000;$i++)
@@ -60,6 +96,7 @@ class Fila {
         $connection->close();
 
         $data["resultado"] = "SUCESSO";
+        $data["debug"] = $messageBody;
 
         return $response->withStatus(200)
             ->withHeader('Content-type', 'application/json;charset=utf-8')

@@ -84,10 +84,11 @@ class PlayerImage {
             //  echo "\n\n\n ".$filtrosDelete;
 
               $this->DeletePlayerImage   ($args, $jsonRAW, $filtrosDelete);
-              //$data["debug"] = $filtrosDelete;
+              $data["debug"] = $filtrosDelete;
             }
+            $jsonRAW["IDUSUARIO"] = $args["idusuario"];
 
-            $idMongo = $this->Image->SetImage( $jsonRAW , $args);
+            $idMongo = $this->Image->SetImage( $jsonRAW , $args, "Player");
 
             $data["msg"] = "Inserted with Object ID '{$idMongo}'";
 
@@ -135,6 +136,7 @@ class PlayerImage {
       }
 
     //  var_dump($filtros);
+ 
 
       $result  = $this->Image->DeleteImage   ($args["idusuario"],  $filtros  );
 
