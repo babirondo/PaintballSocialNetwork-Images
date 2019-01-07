@@ -117,9 +117,12 @@ class Images{
               $idMongo = $resultMongo->getInsertedId();
 
               $data["msg"] = "Inserted with Object ID '{$idMongo}'";
+              $data["idImage"] = "{$idMongo}";
+              $data["Image"] =$imagem_redimensionada;
+              $data["PathImage"] =$imagem_redimensionada;
 
               if ( $idMongo ){
-                  return $idMongo;
+                  return $data;
               }
               else {
                   // nao encontrado

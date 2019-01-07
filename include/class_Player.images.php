@@ -20,6 +20,8 @@ class PlayerImage {
         $this->MongoTable = $this->Globais->MongoConf["Type"]["campeonato"];
 
         $this->Image = new Images($this->MongoTable);
+        $this->API = new \babirondo\REST\RESTCall();
+        
     }
 
     function getPlayerImage (  $request, $response, $args, $jsonRAW ){
@@ -88,13 +90,25 @@ class PlayerImage {
             }
             $jsonRAW["IDUSUARIO"] = $args["idusuario"];
 
-            $idMongo = $this->Image->SetImage( $jsonRAW , $args, "Player");
+            $ResultMongo = $this->Image->SetImage( $jsonRAW , $args, "Player");
+            $idMongo = $ResultMongo["idImage"];
 
-            $data["msg"] = "Inserted with Object ID '{$idMongo}'";
 
             if ( $idMongo ){
-                $data["resultado"] = "SUCESSO" ;
-                $data["idimagem"] = "{$idMongo}";
+
+
+              $data["resultado"] = "SUCESSO" ;
+              $data=  $ResultMongo;
+
+              if ($jsonRAW["TipoImagem"] == "Profile"){
+                //callback para informar imagem processada
+                $trans=null;$trans = array(":idusuario" => $args["idusuario"]  );
+                $salvar_imagem_payload=null;
+                $salvar_imagem_payload["idusuario"] = $jsonRAW["idusuario"];
+                $salvar_imagem_payload["statusProfileImage"] = $ResultMongo["Image"];
+                $query_API = $this->API->CallAPI("POST", strtr( $this->Globais->CallbackPlayerImageProcess, $trans), json_encode($salvar_imagem_payload,1) );
+              }
+
                 return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
             }
             else {
@@ -136,7 +150,7 @@ class PlayerImage {
       }
 
     //  var_dump($filtros);
- 
+
 
       $result  = $this->Image->DeleteImage   ($args["idusuario"],  $filtros  );
 

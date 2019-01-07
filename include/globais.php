@@ -15,6 +15,7 @@ class Globais{
         $servidor["players"] = "http://192.168.0.150:83";
         $servidor["campeonato"] = "http://192.168.0.150:81";
         $servidor["images"] = "http://192.168.0.150:85";
+        $servidor["times"] = "http://192.168.0.150:86";
 
         $servidor["bancodados_campeonato"] = "192.168.0.150";
         $servidor["bancodados_players"] = "192.168.0.150";
@@ -59,8 +60,6 @@ class Globais{
         $this->MongoConf["Type"]["campeonato"] = "Players";
         $this->MongoConf["Id"] = "id";
 
-
-
         $this->healthcheck = $servidor["images"]."/PaintballSocialNetwork-Images/healthcheck/"; //UNIT TEST
 
         $this->PushTeamImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Teams/Analyze/Image/:idtime"; //UNIT TEST
@@ -70,14 +69,17 @@ class Globais{
         $this->setTeamImage = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime"; //UNIT TEST
         $this->DeleteTeamImageAPI = $servidor["images"]."/PaintballSocialNetwork-Images/Team/:idtime"; //UNIT TEST
 
-
-
         $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador";
         $this->PushUserImagetoQueue = $servidor["images"]."/PaintballSocialNetwork-Images/Usuarios/Analyze/Image/:idjogador"; //UNIT TEST
         $this->getPlayersImage = $servidor["images"]."/PaintballSocialNetwork-Images/Players/"; //UNIT TEST
         $this->getPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
         $this->setPlayerImage = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
         $this->DeletePlayerImageAPI = $servidor["images"]."/PaintballSocialNetwork-Images/Player/:idjogador"; //UNIT TEST
+
+
+        $this->CallbackTeamImageProcess = $servidor["times"]."/PaintballSocialNetwork-Teams/Team/ImageProcessed"; //UNIT TEST
+        $this->CallbackPlayerImageProcess = $servidor["players"]."/PaintballSocialNetwork-Players/Player/:idusuario/ImageProcessed"; //UNIT TEST
+
 
     }
 
